@@ -3,48 +3,48 @@ package com.example.myapplication
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.EditText
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+
 
 class MainActivity : AppCompatActivity() {
-    var i = 0
-    val key = "ключ"
+
+    val dbHelper = DBHelper(this)
+    val list = mutableListOf<Todo>()
+
+
+    private lateinit var adapter: RecyclerAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        list.addAll(dbHelper.getAll())
 
-        if (savedInstanceState != null) {
-            i = savedInstanceState.getInt(key)
+        adapter = RecyclerAdapter(list) {
+
+            dbHelper.remove(list[it].id.toInt())
+            // адаптеру передали обработчик удаления элемента
+            list.removeAt(it)
+            adapter.notifyItemRemoved(it)
         }
 
+        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = adapter
+
+
+
+        val Textvvod = findViewById<EditText>(R.id.Textvvod)
         val buttonPlus = findViewById<Button>(R.id.buttonPlus)
-        val buttonMinus = findViewById<Button>(R.id.buttonMinus)
-        render()
         buttonPlus.setOnClickListener {
-            i++
-            render()
-
-        }
-        buttonMinus.setOnClickListener {
-            i--
-            if (i <= 0) {
-                Toast.makeText(applicationContext, "хватит!", Toast.LENGTH_SHORT).show()
-                i = 0
-            }
-            render()
-
+           // val id = dbHelper.add(Textvvod.text.toString(),"89133755105", "city")
+           // list.add(Todo(id,Textvvod.text.toString(),"89133755105","city"))
+           // adapter.notifyItemInserted(list.lastIndex)
         }
 
-
     }
 
-    fun render() {
-        val textView = findViewById<TextView>(R.id.textView)
-        textView.text = i.toString()
-    }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.putInt(key, i)
-        super.onSaveInstanceState(outState)
-    }
+
+
 }
