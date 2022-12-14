@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -10,11 +11,13 @@ import androidx.recyclerview.widget.RecyclerView
 
 class MainActivity : AppCompatActivity() {
 
+    companion object{
+        const val KEY = "idd"
+    }
     val dbHelper = DBHelper(this)
     val list = mutableListOf<Todo>()
-
-
     private lateinit var adapter: RecyclerAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -22,10 +25,14 @@ class MainActivity : AppCompatActivity() {
 
         adapter = RecyclerAdapter(list) {
 
-            dbHelper.remove(list[it].id.toInt())
-            // адаптеру передали обработчик удаления элемента
-            list.removeAt(it)
-            adapter.notifyItemRemoved(it)
+
+
+            //dbHelper.getById(list[it].id.toLong())
+            val intent = Intent(this, MainActivity2::class.java)
+            intent.putExtra(KEY,list[it].id)
+            startActivity(intent)
+
+
         }
 
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
@@ -37,9 +44,9 @@ class MainActivity : AppCompatActivity() {
         val Textvvod = findViewById<EditText>(R.id.Textvvod)
         val buttonPlus = findViewById<Button>(R.id.buttonPlus)
         buttonPlus.setOnClickListener {
-           // val id = dbHelper.add(Textvvod.text.toString(),"89133755105", "city")
-           // list.add(Todo(id,Textvvod.text.toString(),"89133755105","city"))
-           // adapter.notifyItemInserted(list.lastIndex)
+            val intent = Intent(this, MainActivity2::class.java)
+            startActivity(intent)
+
         }
 
     }

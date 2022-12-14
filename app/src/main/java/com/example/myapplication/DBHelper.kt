@@ -98,10 +98,60 @@ class DBHelper (context: Context?): SQLiteOpenHelper(context, DATABASE_NAME, nul
         close()
     }
 
-    fun remove(id: Int) {
+    fun remove(id: Long) {
         val database = this.writableDatabase
         database.delete(TABLE_NAME, "$KEY_ID = ?", arrayOf(id.toString()))
         close()
+    }
+    fun removename(name: String) {
+        val database = this.writableDatabase
+        database.delete(TABLE_NAME, "$KEY_TITLE = ?", arrayOf(name))
+        close()
+    }
+    fun getById(id: Long): Todo? {
+        var result: Todo? = null
+        val database = this.writableDatabase
+        val cursor: Cursor = database.query(
+            TABLE_NAME, null, "$KEY_ID = ?", arrayOf(id.toString()),
+            null, null, null
+        )
+        if (cursor.moveToFirst()) {
+            val idIndex: Int = cursor.getColumnIndex(KEY_ID)
+            val nameIndex: Int = cursor.getColumnIndex(KEY_TITLE)
+            val phoneIndex: Int = cursor.getColumnIndex(KEY_PHONE)
+            val cityIndex: Int = cursor.getColumnIndex(KEY_CITY)
+            result = Todo(
+                cursor.getLong(idIndex),
+                cursor.getString(nameIndex),
+                cursor.getString(phoneIndex),
+                cursor.getString(cityIndex)
+            )
+        }
+        cursor.close()
+        return result
+    }
+
+    fun getByName(name: String): Todo? {
+        var result: Todo? = null
+        val database = this.writableDatabase
+        val cursor: Cursor = database.query(
+            TABLE_NAME, null, "$KEY_TITLE = ?", arrayOf(name),
+            null, null, null
+        )
+        if (cursor.moveToFirst()) {
+            val idIndex: Int = cursor.getColumnIndex(KEY_ID)
+            val nameIndex: Int = cursor.getColumnIndex(KEY_TITLE)
+            val phoneIndex: Int = cursor.getColumnIndex(KEY_PHONE)
+            val cityIndex: Int = cursor.getColumnIndex(KEY_CITY)
+            result = Todo(
+                cursor.getLong(idIndex),
+                cursor.getString(nameIndex),
+                cursor.getString(phoneIndex),
+                cursor.getString(cityIndex)
+            )
+        }
+        cursor.close()
+        return result
     }
 
     fun removeAll() {
